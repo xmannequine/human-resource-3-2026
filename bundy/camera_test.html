@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h3>Camera Test</h3>
+<video id="v" autoplay playsinline style="width:400px;border:1px solid"></video>
+
+<script>
+if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("mediaDevices not supported");
+} else {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            document.getElementById('v').srcObject = stream;
+        })
+        .catch(err => {
+            alert(err.name + ": " + err.message);
+        });
+}
+</script>
+</body>
+</html>

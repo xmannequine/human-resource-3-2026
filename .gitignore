@@ -1,0 +1,49 @@
+# Configuration files with sensitive data
+config.php
+config2.php
+bundy/config2.php
+
+# Vendor dependencies
+vendor/
+composer.lock
+
+# Uploads and user files
+uploads/
+uploads/*
+!uploads/.gitkeep
+
+# Session files
+session.php
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+.directory
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# Node modules (if used)
+node_modules/
+npm-debug.log
+
+# PHP built-in server
+.php_cs
+.php_cs.cache
+
+# Cache directories
+.cache/
+cache/
+
+# Environment files
+.env
+.env.local
