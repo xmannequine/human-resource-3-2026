@@ -158,7 +158,7 @@ $insights = [
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>HR3 Dashboard · Teal Blue Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -264,14 +264,109 @@ $insights = [
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(13, 76, 94, 0.2);
         }
+
+        /* Mobile sidebar styles */
+        .sidebar-open {
+            transform: translateX(0) !important;
+        }
+        
+        .sidebar-closed {
+            transform: translateX(-100%);
+        }
+        
+        /* Improved touch targets for mobile */
+        @media (max-width: 768px) {
+            button, a {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .nav-link-active, nav a, nav button {
+                padding: 12px 16px !important;
+            }
+            
+            .stat-glow {
+                margin-bottom: 8px;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+        }
+        
+        /* Better font scaling on mobile */
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .glass-panel {
+                padding: 16px !important;
+            }
+        }
+        
+        /* Safe area insets for modern mobile devices */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+            
+            .mobile-header {
+                padding-top: env(safe-area-inset-top);
+            }
+            
+            .mobile-footer {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+        
+        /* Mobile menu overlay */
+        .menu-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            transition: opacity 0.3s ease;
+        }
     </style>
 </head>
 <body class="bg-[#f0f7f9] text-slate-700 antialiased">
 
-<!-- ================= SIDEBAR ENHANCED WITH TEAL ================= -->
-<aside class="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#0D4C5E] to-[#1B6B7F] text-white shadow-2xl">
+<!-- Mobile Header - Visible only on mobile -->
+<div class="lg:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-[#0D4C5E] to-[#1B6B7F] text-white p-4 z-30 shadow-lg mobile-header">
+    <div class="flex items-center justify-between">
+        <button id="mobileMenuToggle" class="p-2 hover:bg-white/10 rounded-lg transition-colors" aria-label="Open menu">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        <h2 class="font-semibold text-lg">HR3 Dashboard</h2>
+        <div class="flex items-center space-x-2">
+            <button class="p-2 hover:bg-white/10 rounded-lg transition-colors relative" aria-label="Notifications">
+                <i class="fas fa-bell"></i>
+                <?php if (count($notifications) > 0): ?>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-[#FF7F5C] rounded-full"></span>
+                <?php endif; ?>
+            </button>
+            <img src="<?= $profileImage ?>" class="w-8 h-8 rounded-lg border-2 border-white/20 object-cover">
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div id="menuOverlay" class="lg:hidden fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+<!-- ================= SIDEBAR - Mobile Responsive ================= -->
+<aside id="sidebar" class="fixed inset-y-0 left-0 w-72 bg-gradient-to-b from-[#0D4C5E] to-[#1B6B7F] text-white shadow-2xl z-50 transition-transform duration-300 ease-in-out lg:translate-x-0 sidebar-closed lg:sidebar-open overflow-y-auto">
+    
+    <!-- Close button for mobile -->
+    <button id="closeSidebar" class="lg:hidden absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors" aria-label="Close menu">
+        <i class="fas fa-times text-xl"></i>
+    </button>
+    
     <!-- Profile Summary -->
-    <div class="p-6 border-b border-white/10">
+    <div class="p-6 border-b border-white/10 mt-12 lg:mt-0">
         <div class="flex items-center space-x-4">
             <img src="<?= $profileImage ?>" class="w-14 h-14 rounded-xl border-2 border-white/20 object-cover">
             <div>
@@ -299,10 +394,10 @@ $insights = [
                 <i class="fas fa-chevron-down text-xs transition-transform" :class="{ 'rotate-180': open }"></i>
             </button>
             <div x-show="open" class="ml-12 space-y-1 text-white/70 text-sm" x-cloak>
-                <a href="assign_weekly.php" class="block py-2 hover:text-white transition">Assign Schedule</a>
-                <a href="view_departments.php" class="block py-2 hover:text-white transition">Workforce Management</a>
-                <a href="view_employee.php" class="block py-2 hover:text-white transition">Employees</a>
-                <a href="view_employee_need.php" class="block py-2 hover:text-white transition">Departments</a>
+                <a href="assign_weekly.php" class="block py-3 hover:text-white transition">Assign Schedule</a>
+                <a href="view_departments.php" class="block py-3 hover:text-white transition">Workforce Management</a>
+                <a href="view_employee.php" class="block py-3 hover:text-white transition">Employees</a>
+                <a href="view_employee_need.php" class="block py-3 hover:text-white transition">Departments</a>
             </div>
         </div>
 
@@ -341,16 +436,15 @@ $insights = [
     </nav>
     
     <!-- Version Info -->
-    <div class="absolute bottom-4 left-6 right-6">
+    <div class="p-6">
         <p class="text-xs text-white/50">HR3 v2.0 · Teal Blue Edition</p>
     </div>
 </aside>
 
-<!-- ================= MAIN CONTENT ================= -->
-<main class="ml-72 p-6">
-
-    <!-- Header with Date -->
-    <div class="flex justify-between items-center mb-6">
+<!-- ================= MAIN CONTENT - Mobile Adjusted ================= -->
+<main class="lg:ml-72 p-4 lg:p-6 pt-20 lg:pt-6">
+    <!-- Header with Date - Hidden on mobile (shown in mobile header) -->
+    <div class="hidden lg:flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-[#0D4C5E]">Dashboard Overview</h1>
             <p class="text-sm text-[#1B6B7F] mt-1"><?= date('l, F j, Y') ?></p>
@@ -368,113 +462,121 @@ $insights = [
         </div>
     </div>
 
+    <!-- Mobile Date Display -->
+    <div class="lg:hidden mb-4">
+        <p class="text-sm text-[#1B6B7F]"><?= date('l, F j, Y') ?></p>
+    </div>
+
     <!-- Quick Stats / Notifications - Teal Theme -->
     <?php if (!empty($notifications)): ?>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 lg:gap-4 mb-6">
             <?php foreach ($notifications as $index => $note): ?>
                 <div class="bg-white rounded-xl shadow-sm p-4 flex items-start space-x-3 border-l-4 
                     <?= $note['type'] === 'warning' ? 'border-[#FF7F5C]' : ($note['type'] === 'error' ? 'border-[#FF7F5C]' : 'border-[#1B6B7F]') ?>
                     animate-slide-in" style="animation-delay: <?= $index * 0.1 ?>s">
-                    <div class="rounded-full p-2 <?= $note['type'] === 'warning' ? 'bg-orange-100 text-[#FF7F5C]' : ($note['type'] === 'error' ? 'bg-red-100 text-[#FF7F5C]' : 'bg-[#E6F3F5] text-[#1B6B7F]') ?>">
+                    <div class="rounded-full p-2 <?= $note['type'] === 'warning' ? 'bg-orange-100 text-[#FF7F5C]' : ($note['type'] === 'error' ? 'bg-red-100 text-[#FF7F5C]' : 'bg-[#E6F3F5] text-[#1B6B7F]') ?> flex-shrink-0">
                         <i class="fas <?= $note['icon'] ?>"></i>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-medium text-slate-700"><?= htmlspecialchars($note['message']) ?></p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-slate-700 break-words"><?= htmlspecialchars($note['message']) ?></p>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
 
-    <!-- KPI Cards Enhanced - Teal Color Scheme -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+    <!-- KPI Cards Enhanced - Mobile optimized grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-6">
         <!-- Total Employees -->
-        <a href="view_employee.php" class="bg-white rounded-xl shadow-sm p-5 hover-card stat-glow" style="border-bottom: 3px solid #0D4C5E;">
+        <a href="view_employee.php" class="bg-white rounded-xl shadow-sm p-4 lg:p-5 hover-card stat-glow" style="border-bottom: 3px solid #0D4C5E;">
             <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-medium text-slate-500">Total Employees</p>
-                    <p class="text-2xl font-bold text-[#0D4C5E] mt-1"><?= $totalEmployees ?></p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-500 truncate">Total Employees</p>
+                    <p class="text-xl lg:text-2xl font-bold text-[#0D4C5E] mt-1"><?= $totalEmployees ?></p>
                     <p class="text-xs text-[#1B6B7F] mt-2 flex items-center">
-                        <i class="fas fa-arrow-up mr-1"></i> 12% from last month
+                        <i class="fas fa-arrow-up mr-1 flex-shrink-0"></i>
+                        <span class="truncate">12% from last month</span>
                     </p>
                 </div>
-                <div class="bg-[#E6F3F5] p-2.5 rounded-xl">
+                <div class="bg-[#E6F3F5] p-2.5 rounded-xl flex-shrink-0 ml-2">
                     <i class="fas fa-users text-[#0D4C5E] text-lg"></i>
                 </div>
             </div>
         </a>
 
         <!-- Attendance Today -->
-        <a href="attendance_table.php" class="bg-white rounded-xl shadow-sm p-5 hover-card stat-glow" style="border-bottom: 3px solid #1B6B7F;">
+        <a href="attendance_table.php" class="bg-white rounded-xl shadow-sm p-4 lg:p-5 hover-card stat-glow" style="border-bottom: 3px solid #1B6B7F;">
             <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-medium text-slate-500">Attendance Today</p>
-                    <p class="text-2xl font-bold text-[#1B6B7F] mt-1"><?= $attendanceToday ?></p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-500 truncate">Attendance Today</p>
+                    <p class="text-xl lg:text-2xl font-bold text-[#1B6B7F] mt-1"><?= $attendanceToday ?></p>
                     <p class="text-xs text-slate-500 mt-2 flex items-center">
-                        <span class="w-2 h-2 bg-[#2A8B9F] rounded-full mr-2"></span>
-                        <?= round(($attendanceToday / max($totalEmployees, 1)) * 100) ?>% present
+                        <span class="w-2 h-2 bg-[#2A8B9F] rounded-full mr-2 flex-shrink-0"></span>
+                        <span class="truncate"><?= round(($attendanceToday / max($totalEmployees, 1)) * 100) ?>% present</span>
                     </p>
                 </div>
-                <div class="bg-[#D4F0F0] p-2.5 rounded-xl">
+                <div class="bg-[#D4F0F0] p-2.5 rounded-xl flex-shrink-0 ml-2">
                     <i class="fas fa-user-check text-[#1B6B7F] text-lg"></i>
                 </div>
             </div>
         </a>
 
         <!-- Pending Leaves -->
-        <a href="leave.php" class="bg-white rounded-xl shadow-sm p-5 hover-card stat-glow" style="border-bottom: 3px solid #2A8B9F;">
+        <a href="leave.php" class="bg-white rounded-xl shadow-sm p-4 lg:p-5 hover-card stat-glow" style="border-bottom: 3px solid #2A8B9F;">
             <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-medium text-slate-500">Pending Leaves</p>
-                    <p class="text-2xl font-bold text-[#2A8B9F] mt-1"><?= $pendingLeaves ?></p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-500 truncate">Pending Leaves</p>
+                    <p class="text-xl lg:text-2xl font-bold text-[#2A8B9F] mt-1"><?= $pendingLeaves ?></p>
                     <p class="text-xs text-[#FF7F5C] mt-2 flex items-center">
-                        <i class="fas fa-clock mr-1"></i> Awaiting approval
+                        <i class="fas fa-clock mr-1 flex-shrink-0"></i>
+                        <span class="truncate">Awaiting approval</span>
                     </p>
                 </div>
-                <div class="bg-[#E6F3F5] p-2.5 rounded-xl">
+                <div class="bg-[#E6F3F5] p-2.5 rounded-xl flex-shrink-0 ml-2">
                     <i class="fas fa-file-alt text-[#2A8B9F] text-lg"></i>
                 </div>
             </div>
         </a>
 
         <!-- Pending Claims -->
-        <a href="RR_dashboard.php" class="bg-white rounded-xl shadow-sm p-5 hover-card stat-glow" style="border-bottom: 3px solid #0F5C6B;">
+        <a href="RR_dashboard.php" class="bg-white rounded-xl shadow-sm p-4 lg:p-5 hover-card stat-glow" style="border-bottom: 3px solid #0F5C6B;">
             <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-xs font-medium text-slate-500">Pending Claims</p>
-                    <p class="text-2xl font-bold text-[#0F5C6B] mt-1"><?= $pendingClaims ?></p>
+                <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-slate-500 truncate">Pending Claims</p>
+                    <p class="text-xl lg:text-2xl font-bold text-[#0F5C6B] mt-1"><?= $pendingClaims ?></p>
                     <p class="text-xs text-[#1B6B7F] mt-2 flex items-center">
-                        <i class="fas fa-clock mr-1"></i> Needs review
+                        <i class="fas fa-clock mr-1 flex-shrink-0"></i>
+                        <span class="truncate">Needs review</span>
                     </p>
                 </div>
-                <div class="bg-[#D4F0F0] p-2.5 rounded-xl">
+                <div class="bg-[#D4F0F0] p-2.5 rounded-xl flex-shrink-0 ml-2">
                     <i class="fas fa-receipt text-[#0F5C6B] text-lg"></i>
                 </div>
             </div>
         </a>
     </div>
 
-    <!-- AI Insights Panel Enhanced - Teal Gradient -->
-    <div class="glass-panel rounded-xl shadow-xl p-5 mb-6 text-white">
+    <!-- AI Insights Panel Enhanced - Mobile optimized -->
+    <div class="glass-panel rounded-xl shadow-xl p-4 lg:p-5 mb-6 text-white">
         <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center space-x-2">
-                <div class="bg-white/20 p-1.5 rounded-lg">
+            <div class="flex items-center space-x-2 min-w-0">
+                <div class="bg-white/20 p-1.5 rounded-lg flex-shrink-0">
                     <i class="fas fa-robot text-[#A8E6E6] text-sm"></i>
                 </div>
-                <h3 class="font-semibold text-base">AI Insights & Recommendations</h3>
+                <h3 class="font-semibold text-base truncate">AI Insights & Recommendations</h3>
             </div>
-            <span class="text-xs bg-white/10 px-2 py-1 rounded-full">Updated just now</span>
+            <span class="text-xs bg-white/10 px-2 py-1 rounded-full flex-shrink-0">Updated now</span>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <?php foreach ($insights as $insight): ?>
                 <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm border border-white/10">
                     <div class="flex items-start justify-between">
-                        <div>
+                        <div class="min-w-0 flex-1">
                             <p class="text-xs text-white/70"><?= $insight['metric'] ?></p>
-                            <p class="text-xl font-bold mt-0.5"><?= $insight['value'] ?></p>
+                            <p class="text-lg lg:text-xl font-bold mt-0.5"><?= $insight['value'] ?></p>
                         </div>
-                        <div class="flex items-center space-x-1">
+                        <div class="flex items-center space-x-1 flex-shrink-0 ml-2">
                             <?php if ($insight['trend'] > 0): ?>
                                 <i class="fas fa-arrow-up text-[#A8E6E6] text-xs"></i>
                                 <span class="text-xs text-[#A8E6E6]">+<?= round($insight['trend'], 1) ?></span>
@@ -484,10 +586,10 @@ $insights = [
                             <?php endif; ?>
                         </div>
                     </div>
-                    <div class="mt-2 flex items-center justify-between">
+                    <div class="mt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                         <span class="text-xs text-white/80"><?= $insight['message'] ?></span>
                         <?php if ($insight['action']): ?>
-                            <button class="text-xs bg-white/20 hover:bg-white/30 px-2 py-0.5 rounded transition">
+                            <button class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded transition whitespace-nowrap w-full sm:w-auto text-center">
                                 <?= $insight['action'] ?>
                             </button>
                         <?php endif; ?>
@@ -497,11 +599,11 @@ $insights = [
         </div>
     </div>
 
-    <!-- Charts Section - Teal Theme -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
+    <!-- Charts Section - Mobile optimized -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5 mb-5">
         <!-- Attendance Trend -->
         <div class="bg-white rounded-xl shadow-sm p-4">
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                 <h3 class="font-semibold text-[#0D4C5E] text-sm">Attendance Trend</h3>
                 <div class="flex items-center space-x-2">
                     <span class="text-xs bg-[#E6F3F5] text-[#0D4C5E] px-2 py-1 rounded">Last 14 days</span>
@@ -514,7 +616,7 @@ $insights = [
 
         <!-- Leave Trend -->
         <div class="bg-white rounded-xl shadow-sm p-4">
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                 <h3 class="font-semibold text-[#1B6B7F] text-sm">Leave Requests</h3>
                 <div class="flex items-center space-x-2">
                     <span class="text-xs bg-[#D4F0F0] text-[#1B6B7F] px-2 py-1 rounded">Pending only</span>
@@ -526,11 +628,11 @@ $insights = [
         </div>
     </div>
 
-    <!-- Bottom Section: Claims Chart + Activity -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        <!-- Claims Chart (takes 2 columns) -->
+    <!-- Bottom Section: Claims Chart + Activity - Mobile optimized -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
+        <!-- Claims Chart (takes 2 columns on desktop) -->
         <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-4">
-            <div class="flex justify-between items-center mb-3">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                 <h3 class="font-semibold text-[#0F5C6B] text-sm">Claims Overview</h3>
                 <div class="flex items-center space-x-2">
                     <span class="text-xs bg-[#E6F3F5] text-[#0F5C6B] px-2 py-1 rounded">Pending claims</span>
@@ -554,18 +656,18 @@ $insights = [
                 <div class="space-y-3">
                     <?php foreach ($activityLog as $log): ?>
                         <div class="flex items-start space-x-2">
-                            <div class="rounded-full p-1.5 <?= $log['type'] === 'warning' ? 'bg-orange-100' : 'bg-[#E6F3F5]' ?>">
+                            <div class="rounded-full p-1.5 <?= $log['type'] === 'warning' ? 'bg-orange-100' : 'bg-[#E6F3F5]' ?> flex-shrink-0">
                                 <i class="fas <?= $log['icon'] ?> <?= $log['type'] === 'warning' ? 'text-[#FF7F5C]' : 'text-[#1B6B7F]' ?> text-xs"></i>
                             </div>
-                            <div class="flex-1">
-                                <p class="text-xs font-medium text-slate-700"><?= htmlspecialchars($log['activity']) ?></p>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-medium text-slate-700 truncate"><?= htmlspecialchars($log['activity']) ?></p>
                                 <p class="text-xs text-slate-500 mt-0.5"><?= date('M d, Y · h:i A', strtotime($log['activity_date'])) ?></p>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
                 
-                <button class="w-full mt-3 text-xs text-[#1B6B7F] hover:text-[#0D4C5E] font-medium flex items-center justify-center">
+                <button class="w-full mt-4 text-xs text-[#1B6B7F] hover:text-[#0D4C5E] font-medium flex items-center justify-center py-2">
                     View all activity
                     <i class="fas fa-arrow-right ml-1 text-xs"></i>
                 </button>
@@ -573,23 +675,72 @@ $insights = [
         </div>
     </div>
 
-    <!-- Footer -->
-    <div class="mt-6 pt-4 border-t border-[#D4F0F0]">
-        <div class="flex justify-between items-center text-xs text-[#1B6B7F]">
-            <p>© iMARKET HUMAN RESOURCE 3 SYSTEM · Teal Blue Edition</p>
+    <!-- Footer - Mobile optimized -->
+    <div class="mt-6 pt-4 border-t border-[#D4F0F0] mobile-footer">
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-[#1B6B7F]">
+            <p>© iMARKET HUMAN RESOURCE 3 SYSTEM</p>
             <p>Last updated: <?= date('M d, Y h:i A') ?></p>
         </div>
     </div>
 </main>
 
-<!-- Charts JavaScript - Updated with Teal Colors -->
+<!-- Mobile JavaScript for sidebar toggle -->
 <script>
-// Chart configurations
+// Mobile menu functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const menuOverlay = document.getElementById('menuOverlay');
+    
+    function openSidebar() {
+        sidebar.classList.remove('sidebar-closed');
+        sidebar.classList.add('sidebar-open');
+        menuOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeSidebarFunc() {
+        sidebar.classList.add('sidebar-closed');
+        sidebar.classList.remove('sidebar-open');
+        menuOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    
+    if (menuToggle) {
+        menuToggle.addEventListener('click', openSidebar);
+    }
+    
+    if (closeSidebar) {
+        closeSidebar.addEventListener('click', closeSidebarFunc);
+    }
+    
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', closeSidebarFunc);
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+            sidebar.classList.remove('sidebar-closed');
+            sidebar.classList.add('sidebar-open');
+            if (menuOverlay) {
+                menuOverlay.classList.add('hidden');
+            }
+            document.body.style.overflow = '';
+        } else {
+            sidebar.classList.add('sidebar-closed');
+            sidebar.classList.remove('sidebar-open');
+        }
+    });
+});
+
+// Charts JavaScript (unchanged)
 Chart.defaults.font.family = "'Inter', sans-serif";
 Chart.defaults.font.size = 10;
 Chart.defaults.color = '#1B6B7F';
 
-// Attendance Chart - Teal theme
+// Attendance Chart
 new Chart(document.getElementById('attendanceChart'), {
     type: 'line',
     data: {
@@ -604,7 +755,7 @@ new Chart(document.getElementById('attendanceChart'), {
             pointBackgroundColor: '#0D4C5E',
             pointBorderColor: 'white',
             pointBorderWidth: 1.5,
-            pointRadius: 3,
+            pointRadius: window.innerWidth < 640 ? 2 : 3,
             pointHoverRadius: 4,
             borderWidth: 2
         }]
@@ -616,26 +767,32 @@ new Chart(document.getElementById('attendanceChart'), {
             legend: { display: false },
             tooltip: { 
                 backgroundColor: '#0D4C5E',
-                titleFont: { size: 11 },
-                bodyFont: { size: 10 },
-                padding: 6
+                titleFont: { size: window.innerWidth < 640 ? 10 : 11 },
+                bodyFont: { size: window.innerWidth < 640 ? 9 : 10 },
+                padding: window.innerWidth < 640 ? 4 : 6
             }
         },
         scales: {
             y: { 
                 beginAtZero: true, 
                 grid: { color: '#E6F3F5', lineWidth: 0.5 },
-                ticks: { font: { size: 9 } }
+                ticks: { 
+                    font: { size: window.innerWidth < 640 ? 8 : 9 },
+                    maxTicksLimit: window.innerWidth < 640 ? 5 : 8
+                }
             },
             x: { 
                 grid: { display: false },
-                ticks: { font: { size: 9 } }
+                ticks: { 
+                    font: { size: window.innerWidth < 640 ? 8 : 9 },
+                    maxRotation: window.innerWidth < 640 ? 45 : 0
+                }
             }
         }
     }
 });
 
-// Leave Chart - Teal theme
+// Leave Chart
 new Chart(document.getElementById('leaveChart'), {
     type: 'bar',
     data: {
@@ -655,26 +812,32 @@ new Chart(document.getElementById('leaveChart'), {
             legend: { display: false },
             tooltip: { 
                 backgroundColor: '#0D4C5E',
-                titleFont: { size: 11 },
-                bodyFont: { size: 10 },
-                padding: 6
+                titleFont: { size: window.innerWidth < 640 ? 10 : 11 },
+                bodyFont: { size: window.innerWidth < 640 ? 9 : 10 },
+                padding: window.innerWidth < 640 ? 4 : 6
             }
         },
         scales: {
             y: { 
                 beginAtZero: true, 
                 grid: { color: '#E6F3F5', lineWidth: 0.5 },
-                ticks: { font: { size: 9 } }
+                ticks: { 
+                    font: { size: window.innerWidth < 640 ? 8 : 9 },
+                    maxTicksLimit: window.innerWidth < 640 ? 5 : 8
+                }
             },
             x: { 
                 grid: { display: false },
-                ticks: { font: { size: 9 } }
+                ticks: { 
+                    font: { size: window.innerWidth < 640 ? 8 : 9 },
+                    maxRotation: window.innerWidth < 640 ? 45 : 0
+                }
             }
         }
     }
 });
 
-// Claims Chart - Teal theme
+// Claims Chart
 new Chart(document.getElementById('claimsChart'), {
     type: 'bar',
     data: {
@@ -694,31 +857,29 @@ new Chart(document.getElementById('claimsChart'), {
             legend: { display: false },
             tooltip: { 
                 backgroundColor: '#0D4C5E',
-                titleFont: { size: 11 },
-                bodyFont: { size: 10 },
-                padding: 6
+                titleFont: { size: window.innerWidth < 640 ? 10 : 11 },
+                bodyFont: { size: window.innerWidth < 640 ? 9 : 10 },
+                padding: window.innerWidth < 640 ? 4 : 6
             }
         },
         scales: {
             y: { 
                 beginAtZero: true, 
                 grid: { color: '#E6F3F5', lineWidth: 0.5 },
-                ticks: { font: { size: 9 } }
+                ticks: { 
+                    font: { size: window.innerWidth < 640 ? 8 : 9 },
+                    maxTicksLimit: window.innerWidth < 640 ? 5 : 8
+                }
             },
             x: { 
                 grid: { display: false },
-                ticks: { font: { size: 9 } }
+                ticks: { 
+                    font: { size: window.innerWidth < 640 ? 8 : 9 },
+                    maxRotation: window.innerWidth < 640 ? 45 : 0
+                }
             }
         }
     }
-});
-
-// Add Alpine.js for dropdown functionality
-document.addEventListener('alpine:init', () => {
-    Alpine.data('dropdown', () => ({
-        open: false,
-        toggle() { this.open = !this.open; }
-    }));
 });
 </script>
 <script src="//unpkg.com/alpinejs" defer></script>
